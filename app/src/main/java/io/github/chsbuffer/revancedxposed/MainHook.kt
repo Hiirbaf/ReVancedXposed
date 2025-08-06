@@ -10,13 +10,7 @@ import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam
 import io.github.chsbuffer.revancedxposed.common.UpdateChecker
-import io.github.chsbuffer.revancedxposed.googlephotos.GooglePhotosHook
-import io.github.chsbuffer.revancedxposed.meta.MetaHook
-import io.github.chsbuffer.revancedxposed.music.MusicHook
-import io.github.chsbuffer.revancedxposed.reddit.RedditHook
 import io.github.chsbuffer.revancedxposed.spotify.SpotifyHook
-import io.github.chsbuffer.revancedxposed.strava.StravaHook
-import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
 
 class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit {
     lateinit var startupParam: StartupParam
@@ -24,14 +18,7 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit {
     lateinit var app: Application
     var targetPackageName: String? = null
     val hooksByPackage = mapOf(
-        "com.google.android.apps.youtube.music" to { MusicHook(app, lpparam) },
-        "com.google.android.youtube" to { YoutubeHook(app, lpparam) },
-        "com.spotify.music" to { SpotifyHook(app, lpparam) },
-        "com.reddit.frontpage" to { RedditHook(app, lpparam) },
-        "com.google.android.apps.photos" to { GooglePhotosHook(lpparam) },
-        "com.instagram.android" to { MetaHook(app, lpparam) },
-        "com.instagram.barcelona" to { MetaHook(app, lpparam) },
-        "com.strava" to { StravaHook(app, lpparam) })
+        "com.spotify.music" to { SpotifyHook(app, lpparam) })
 
     fun shouldHook(packageName: String): Boolean {
         if (!hooksByPackage.containsKey(packageName)) return false
