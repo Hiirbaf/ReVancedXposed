@@ -12,10 +12,10 @@ plugins {
 }
 
 android {
-    namespace = "io.github.chsbuffer.revancedxposed"
+    namespace = "io.github.hiirbaf.spotifyxposed"
 
     defaultConfig {
-        applicationId = "io.github.chsbuffer.revancedxposed"
+        applicationId = "io.github.hiirbaf.spotifyxposed"
         versionCode = 23
         versionName = "1.0.$versionCode"
         val patchVersion = Properties().apply {
