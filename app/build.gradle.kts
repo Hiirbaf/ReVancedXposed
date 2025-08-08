@@ -12,7 +12,7 @@ plugins {
 }
 
 android {
-    namespace = "io.github.hiirbaf.spotifyxposed"
+    namespace = "io.github.chsbuffer.revancedxposed"
 
     defaultConfig {
         applicationId = "io.github.hiirbaf.spotifyxposed"
