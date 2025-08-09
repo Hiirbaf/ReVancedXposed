@@ -8,6 +8,7 @@ import app.revanced.extension.shared.Logger
 import app.revanced.extension.shared.Utils
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
+import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam
 import io.github.chsbuffer.revancedxposed.BuildConfig.DEBUG
 import org.luckypray.dexkit.DexKitBridge
@@ -17,7 +18,9 @@ import org.luckypray.dexkit.result.MethodData
 import org.luckypray.dexkit.wrap.DexClass
 import org.luckypray.dexkit.wrap.DexField
 import org.luckypray.dexkit.wrap.DexMethod
+import java.lang.reflect.Constructor
 import java.lang.reflect.Member
+import java.lang.reflect.Method
 import kotlin.reflect.KFunction0
 import kotlin.system.measureTimeMillis
 
@@ -36,11 +39,30 @@ interface IHook {
     }
 
     fun DexClass.toClass() = getInstance(classLoader)
-    fun DexMethod.toMethod() = getMethodInstance(classLoader)
-    fun DexMethod.toMember() = when {
-        isMethod -> getMethodInstance(classLoader)
-        isConstructor -> getConstructorInstance(classLoader)
-        else -> throw NotImplementedError()
+    fun DexMethod.toMethod(): Method {
+        var clz = classLoader.loadClass(className)
+        do {
+            return XposedHelpers.findMethodExactIfExists(clz, name, *paramTypeNames.toTypedArray())
+                ?: continue
+        } while (clz.superclass.also { clz = it } != null)
+        throw NoSuchMethodException("Method $this not found")
+    }
+
+    fun DexMethod.toConstructor(): Constructor<*> {
+        var clz = classLoader.loadClass(className)
+        do {
+            return XposedHelpers.findConstructorExactIfExists(clz, *paramTypeNames.toTypedArray())
+                ?: continue
+        } while (clz.superclass.also { clz = it } != null)
+        throw NoSuchMethodException("Method $this not found")
+    }
+
+    fun DexMethod.toMember(): Member {
+        return when {
+            isMethod -> toMethod()
+            isConstructor -> toConstructor()
+            else -> throw NotImplementedError()
+        }
     }
 
     fun DexField.toField() = getFieldInstance(classLoader)

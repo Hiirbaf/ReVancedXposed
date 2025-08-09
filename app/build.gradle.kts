@@ -19,7 +19,7 @@ android {
         versionCode = 23
         versionName = "1.0.$versionCode"
         val patchVersion = Properties().apply {
-            File("revanced-patches/gradle.properties").inputStream().use { load(it) }
+            rootProject.file("revanced-patches/gradle.properties").inputStream().use { load(it) }
         }["version"]
         buildConfigField("String", "PATCH_VERSION", "\"$patchVersion\"")
     }
